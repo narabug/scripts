@@ -9,14 +9,6 @@ VERSION="0.9.13"
 MCJVERSION="5.1.45"
 TOMCAT="tomcat"
 
-# Update system and configure weekly updates
-yum -y update
-yum -y install yum-cron
-systemctl enable yum-cron
-systemctl start yum-cron
-sed -i -e 's/# default/default  /g' /etc/yum/yum-cron.conf
-sed -i -e 's/apply_updates = no/apply_updates = yes/g' /etc/yum/yum-cron.conf
-
 # Get MySQL root password and guac user password
 echo
 while true
@@ -41,6 +33,14 @@ do
     echo
 done
 echo
+
+# Update system and configure weekly updates
+yum -y update
+yum -y install yum-cron
+systemctl enable yum-cron
+systemctl start yum-cron
+sed -i -e 's/# default/default  /g' /etc/yum/yum-cron.conf
+sed -i -e 's/apply_updates = no/apply_updates = yes/g' /etc/yum/yum-cron.conf
 
 # Install repositories and prerequisites: EPEL, Felfert, nux-dextop
 yum -y install epel-release wget
