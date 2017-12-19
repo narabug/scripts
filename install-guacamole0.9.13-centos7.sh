@@ -127,14 +127,16 @@ echo "mysql-port: 3306" >> /etc/guacamole/guacamole.properties
 echo "mysql-database: guacamole_db" >> /etc/guacamole/guacamole.properties
 echo "mysql-username: guacamole_user" >> /etc/guacamole/guacamole.properties
 echo "mysql-password: $guacdbuserpassword" >> /etc/guacamole/guacamole.properties
+echo "mysql-default-max-connections-per-user: 0" >> /etc/guacamole/guacamole.properties
+echo "mysql-default-max-group-connections-per-user: 0" >> /etc/guacamole/guacamole.properties
 rm -rf /usr/share/${TOMCAT}/.guacamole
 ln -s /etc/guacamole /usr/share/${TOMCAT}/.guacamole
 
-service ${TOMCAT} restart
+systemctl restart tomcat.service
 
 # SQL code
 systemctl restart mariadb.service
-mysqladmin -u root password "$mysqlrootpassword"
+mysqladmin -u root password $mysqlrootpassword
 SQLCODE="
 create database guacamole_db;
 create user 'guacamole_user'@'localhost' identified by \"$guacdbuserpassword\";
@@ -146,6 +148,7 @@ echo $SQLCODE | mysql -u root -p$mysqlrootpassword
 cat guacamole-auth-jdbc-${VERSION}-incubating/mysql/schema/*.sql | mysql -u root -p$mysqlrootpassword guacamole_db
 
 # Cleanup
+systemctl enable tomcat.service && systemctl enable mariadb.service && chkconfig guacd on
 rm -rf guacamole-*
 rm -rf mysql-connector-java-${MCJVERSION}*
 
