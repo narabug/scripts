@@ -57,19 +57,28 @@ if [ $? != 0 ]; then
 fi
 
 # Add GUACAMOLE_HOME to $TOMCAT ENV
-echo "" >> /etc/default/${TOMCAT}
-echo "# GUACAMOLE ENV VARIABLE" >> /etc/default/${TOMCAT}
-echo "GUACAMOLE_HOME=/etc/guacamole" >> /etc/default/${TOMCAT}
+echo "" >> /usr/share/${TOMCAT}
+echo "# GUACAMOLE ENV VARIABLE" >> /usr/share/${TOMCAT}
+echo "GUACAMOLE_HOME=/etc/guacamole" >> /usr/share/${TOMCAT}
 
 # Set SERVER to be the preferred download server from the Apache CDN
 SERVER="http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${VERSION}-incubating"
+
+
+# Download Guacamole Server
+wget -O guacamole-server-${VERSION}-incubating.tar.gz ${SERVER}/source/guacamole-server-${VERSION}-incubating.tar.gz
+if [ ! -f ./guacamole-server-${VERSION}-incubating.tar.gz ]; then
+    echo "Failed to download guacamole-server-${VERSION}-incubating.tar.gz"
+    echo "${SERVER}/source/guacamole-server-${VERSION}-incubating.tar.gz"
+    exit
+fi
 
 # Download Guacamole Client
 wget -O guacamole-${VERSION}-incubating.war ${SERVER}/binary/guacamole-${VERSION}-incubating.war
 if [ ! -f ./guacamole-${VERSION}-incubating.war ]; then
     echo "Failed to download guacamole-${VERSION}-incubating.war"
     echo "${SERVER}/binary/guacamole-${VERSION}-incubating.war"
-    exit
+    e$ser
 fi
 
 # Download Guacamole authentication extensions
